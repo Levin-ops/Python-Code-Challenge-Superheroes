@@ -5,19 +5,22 @@ from flask_migrate import Migrate
 
 from models import db, Hero, Power, HeroPower
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/app.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+def create_app():
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-migrate = Migrate(app, db)
+    migrate = Migrate(app, db)
 
-db.init_app(app)
+    db.init_app(app)
 
-@app.route('/')
-def home():
-    return ('''<h1> Phase 4 Code Challenge 1</h1>
-            <h2>Superheroes</h2>''')
+    @app.route('/')
+    def home():
+        return ('''<h1> Phase 4 Code Challenge 1</h1>
+                <h2>Superheroes</h2>''')
 
+
+    return app
 
 if __name__ == '__main__':
-    app.run(port=5555, debug = True)
+    create_app().run(port=5555, debug = True)
