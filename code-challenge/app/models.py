@@ -5,8 +5,6 @@ db = SQLAlchemy()
 class Hero(db.Model):
     __tablename__ = 'heroes'
 
-# This Hero class has a one-to-many relationship 
-# with the HeroPower class through the powers attribute.
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     super_name = db.Column(db.String)
@@ -14,6 +12,7 @@ class Hero(db.Model):
 
 class Power(db.Model):
     __tablename__ = 'powers'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     description = db.Column(db.String)
@@ -21,6 +20,7 @@ class Power(db.Model):
 
 class HeroPower(db.Model):
     __tablename__ = 'hero_powers'
+    
     id = db.Column(db.Integer, primary_key=True)
     hero_id = db.Column(db.Integer, db.ForeignKey('heroes.id'))
     power_id = db.Column(db.Integer, db.ForeignKey('powers.id'))
