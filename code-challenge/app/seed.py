@@ -1,48 +1,41 @@
-from random import choice as rc
-from faker import Faker
-from app import create_app
-from models import db, Hero, Power, HeroPower
+from app import app, db, Hero, Power
+import random
 
-fake = Faker()
+# Create an application context
+with app.app_context():
+    # Seeding powers
+    powers_data = [
+        {"name": "Super Strength", "description": "Gives the wielder super-human strengths"},
+        {"name": "Flight", "description": "Gives the wielder the ability to fly through the skies at supersonic speed"},
+        {"name": "Telekinesis", "description": "Allows the wielder to move objects with their mind"},
+        {"name": "Invisibility", "description": "Makes the wielder invisible to the naked eye"},
+    ]
 
-hero_names = [fake.first_name() for _ in range(4)]
-
-def make_seed_data():
-    # Clear existing data
-    db.drop_all()
-    db.create_all()
-
-    # Seed data
-    heroes = []
-    powers = []
-    hero_powers = []
-
-    for i in range(4):
-        hero = Hero(
-            name=rc(hero_names),
-            super_name=fake.first_name(),
-        )
-        heroes.append(hero)
-        db.session.add(hero)
-
-        power = Power(
-            name=fake.word(),
-            description=fake.sentence(),
-        )
-        powers.append(power)
-        db.session.add(power)
-
-        hero_power = HeroPower(
-            hero=hero,
-            power=power,
-        )
-        hero_powers.append(hero_power)
-        db.session.add(hero_power)
-
+    powers = [Power(**data) for data in powers_data]
+    db.session.add_all(powers)
     db.session.commit()
 
-if __name__ == '__main__':
-    app = create_app()
-    
-    with app.app_context():
-        make_seed_data()
+    # Seeding heroes
+    heroes_data = [
+        {"name": "Clark Kent", "super_name": "Superman"},
+        {"name": "Diana Prince", "super_name": "Wonder Woman"},
+        {"name": "Bruce Wayne", "super_name": "Batman"},
+        {"name": "Barry Allen", "super_name": "The Flash"},
+    ]
+
+    heroes = [Hero(**data) for data in heroes_data]
+    db.session.add_all(heroes)
+    db.session.commit()
+
+    # Adding powers to heroes
+    strengths = ["Strong", "Weak", "Average"]
+
+    for hero in Hero.query.all():
+        for _ in range(random.randint(1, 3)):
+            power = random.choice(Power.query.all())
+            hero_powers = hero.powers
+            if power not in hero_powers:
+                hero_powers.append(power)
+                db.session.commit()
+
+    print("🦸‍♂️ Done seeding!")
