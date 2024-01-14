@@ -22,14 +22,14 @@ def home():
 def get_heroes():
     heroes = Hero.query.all()
 
-    formated_output=[
+    hero_dict=[
         {"id":hero.id,
          "name":hero.name,
          "super_name":hero.super_name}
          for hero in heroes]
     
     response = make_response(
-        jsonify(formated_output),
+        jsonify(hero_dict),
         200
     )
 
