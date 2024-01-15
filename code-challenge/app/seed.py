@@ -1,9 +1,9 @@
 from app import app, db, Hero, Power
 import random
 
-# Create an application context
+
 with app.app_context():
-    # Seeding powers
+  
     powers_data = [
         {"name": "Super Strength", "description": "Gives the wielder super-human strengths"},
         {"name": "Flight", "description": "Gives the wielder the ability to fly through the skies at supersonic speed"},
@@ -15,7 +15,7 @@ with app.app_context():
     db.session.add_all(powers)
     db.session.commit()
 
-    # Seeding heroes
+
     heroes_data = [
         {"name": "Clark Kent", "super_name": "Superman"},
         {"name": "Diana Prince", "super_name": "Wonder Woman"},
@@ -27,7 +27,7 @@ with app.app_context():
     db.session.add_all(heroes)
     db.session.commit()
 
-    # Adding powers to heroes
+
     strengths = ["Strong", "Weak", "Average"]
 
     for hero in Hero.query.all():
@@ -38,4 +38,4 @@ with app.app_context():
                 hero_powers.append(power)
                 db.session.commit()
 
-    print("🦸‍♂️ Done seeding!")
+    print("Done seeding!")
