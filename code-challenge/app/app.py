@@ -40,15 +40,15 @@ def get_hero_by_id(hero_id):
     hero = Hero.query.get(hero_id)
 
     if request.method == 'GET':
-        # if hero in None:
-        #     response_body={
-        #         "error":"Hero not found"
-        #     }
-        #     response = make_response(
-        #         jsonify(response_body),
-        #         404
-        #     )
-        #     return response
+        if not hero:
+            response_body={
+                "error":"Hero not found"
+            }
+            response = make_response(
+                jsonify(response_body),
+                404
+            )
+            return response
         
         powers_dict =[{
             "id":power.id,
@@ -70,6 +70,75 @@ def get_hero_by_id(hero_id):
         )
 
         return response
+
+@app.route('/powers', methods=['GET'])
+def get_powers():
+    powers = Power.query.all()
+
+    powers_dict = [{'id': power.id, 'name': power.name, 'description': power.description} for power in powers]
+
+    response = make_response(
+        jsonify(powers_dict),
+        200
+    )
+
+    return response
+
+@app.route('/powers/<int:power_id>', methods = ['GET'])
+def get_powers_by_id(power_id):
+    power= Power.query.get(power_id)
+    if request.method == 'GET':
+        if not power:
+            response_body={
+                "error":"Power not found"
+            }
+            response = make_response(
+                jsonify(response_body),
+                404
+            )
+            return response
+        
+        power_data = {
+            'id': power.id,
+            'name': power.name,
+            'description': power.description
+        }   
+
+        response = make_response(
+        jsonify(power_data), 200)
+    
+        return response
+    
+@app.route('/powers/<int:power_id>', methods=['PATCH'])
+def update_power(power_id):
+    power = Power.query.get(power_id)
+    if not power:
+        return make_response(jsonify({'error': 'Power not found'}), 404)
+
+    data = request.get_json()
+    if 'description' not in data:
+        return make_response(
+            jsonify({'error': 'Description is required'}), 400)
+
+    description = data['description']
+    power.description = description
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return make_response(jsonify({'error': str(e)}), 500)
+
+    power_data = {
+        'id': power.id,
+        'name': power.name,
+        'description': power.description
+    }
+
+    response = make_response(
+        jsonify(power_data), 200)
+    
+    return response
 
 
 
